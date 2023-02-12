@@ -1,6 +1,9 @@
 # SolarMiningTool
 Pilotage de la puissance de minage en fonction de la production solaire et couleur Tempo EDF du jour
 
+<img src="capture.jpg" width="500"/>
+
+
 ## Préalables
 
 ### Librairies  à installer :
