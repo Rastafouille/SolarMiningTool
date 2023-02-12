@@ -48,7 +48,7 @@ Pour que le script se lance dans un screen au démarrage
 Ajouter
 	$ screen -S SolarMiningTool /home/user/SolarMiningTool/SolarMiningTool.sh
  
- NE MARCHE PAS ....
+NE MARCHE PAS ....
 
  Tentative en cours avec systemd
 	$ /etc/systemd/system/SolarMiningTool.service
@@ -57,5 +57,5 @@ Ajouter
 	$ sudo journalctl -u SolarMiningTool.service
 
   
-  
+  TEST
  
