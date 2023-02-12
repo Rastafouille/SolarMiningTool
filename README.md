@@ -10,10 +10,8 @@ Pilotage puissance de minage en fonction de la production solaire et couleur Tem
 	$ sudo apt-get install -y figlet 
 	$ sudo apt-get install -y jq 
 
-
 ### API Tempo
-
-pour récupérer la couleur Tempo via RTE
-créer un compte su <https://data.rte-france.com/>
-créer une application "web/serveur" associée à l'API "Tempo Like Supply Contract"
-recupérer son identifiant en cliquant sur "copier en base 64" et le coller dans SolarMiningTool.sh au niveau de la variable base64id, en "" 
+Pour récupérer la couleur Tempo via RTE
+- Créer un compte su <https://data.rte-france.com/>
+- Créer une application "web/serveur" associée à l'API "Tempo Like Supply Contract"
+- Recupérer son identifiant en cliquant sur "copier en base 64" et le coller dans SolarMiningTool.sh au niveau de la variable base64id, en "" 
