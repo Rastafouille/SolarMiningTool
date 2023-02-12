@@ -21,7 +21,7 @@ Pour récupérer les valeurs de production solaire et surtout de surplus. Pour m
 - Dans Service/API récuperer son token ID et API address
 - Dans Device/Inverter récupérer le Registration No. de son onduleur 
 
-### Réglage des paramètres :
+### Réglage des paramètres
 Dans l'entête du script SolarMiningTool.sh éditer tous vos paramètres 
 
 - base64="<votre identifiant api tempo en base 64>"
@@ -32,3 +32,12 @@ gpu_power_max=<puissance max appliquée pour 1 gpu>
 gpu_power_min=<puissance min appliquée pour 1 gpu>
 gpu_nombre=<nombre de gpu sur le rig>
 refresh_time_second=<période de rachraichissement des puissances>
+
+sachant que le soleil en HC ...
+
+
+
+### lancement au démarrage
+
+dans un screen
+ screen -S solarminig solar_mining_tool.sh
