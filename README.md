@@ -6,6 +6,7 @@ Pilotage de la puissance de minage en fonction de la production solaire et coule
 ## Préalables
 
 Passer le script en executable
+
 	$ chmod +x SolarMiningTool.sh
 
 ### Librairies  à installer :
@@ -43,14 +44,17 @@ Sachant que le soleil en HC ...
 ### lancement au démarrage
 
 Pour que le script se lance dans un screen au démarrage
+
 	$ sudo nano /etc/rc.local
 	
 Ajouter
+
 	$ screen -S SolarMiningTool /home/user/SolarMiningTool/SolarMiningTool.sh
  
 NE MARCHE PAS ....
 
  Tentative en cours avec systemd
+ 
 	$ /etc/systemd/system/SolarMiningTool.service
 	$ systemctl daemon-reload
 	$ systemctl start SolarMiningTool.service
