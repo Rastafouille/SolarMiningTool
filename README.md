@@ -1,6 +1,5 @@
 # SolarMiningTool
-Pilotage puissance de minage en fonction de la production solaire et couleur Tempo EDF
-
+Pilotage de la puissance de minage en fonction de la production solaire et couleur Tempo EDF du jour
 
 ## Préalables
 
@@ -22,22 +21,26 @@ Pour récupérer les valeurs de production solaire et surtout de surplus. Pour m
 - Dans Device/Inverter récupérer le Registration No. de son onduleur 
 
 ### Réglage des paramètres
-Dans l'entête du script SolarMiningTool.sh éditer tous vos paramètres 
 
+Modifier le fichier .json en remplacant les "xxx" par vos valeurs et renommer en ApiData.json
 - base64="<votre identifiant api tempo en base 64>"
 - solax_tokenid="<tokenid de l'APi Solax>"
 - solax_sn="<Registration No. de son onduleur Solax>"
 
-gpu_power_max=<puissance max appliquée pour 1 gpu>
-gpu_power_min=<puissance min appliquée pour 1 gpu>
+Dans l'entête du script SolarMiningTool.sh éditer tous vos paramètres :
 gpu_nombre=<nombre de gpu sur le rig>
 refresh_time_second=<période de rachraichissement des puissances>
 
-sachant que le soleil en HC ...
-
+Puis toutes les puissances que vous souhaitez en fonction de la couleur tempo et le tarif HC ou HP
+Sachant que le soleil en HC ...
 
 
 ### lancement au démarrage
+pour la script se lance dans un screen au démarrage
 
+sudo gedit /etc/rc.local
 dans un screen
- screen -S solarminig solar_mining_tool.sh
+ screen -S SolarMiningTool /home/user/SolarMiningTool/SolarMiningTool.sh
+ 
+ 
+ chmod +x SolarMiningTool.sh

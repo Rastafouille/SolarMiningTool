@@ -2,16 +2,13 @@
 
 ##### PARAMETRES A REGLER
 
-log_file_name = "ApiData.json" fichier a modifier avec ses paramètres
+log_file_name="ApiData.json" #fichier a modifier avec ses paramètres
+    # import du json
+    solax_tokenid=$(cat $log_file_name | jq '.solax_tokenid'| tr -d '"')
+    solax_sn=$(cat $log_file_name | jq '.solax_sn'| tr -d '"')
+    base64=$(cat $log_file_name | jq '.base64'| tr -d '"')
+
 refresh_time_second=300
-
-acpower=$(echo $data | jq '.result.acpower')
-
-solax_tokenid = $(cat $log_file_name | jq '.solax_tokenid')
-solax_sn = $(cat $log_file_name | jq '.solax_sn')
-base64 = $(cat $log_file_name | jq '.base64')
-
-
 
 ### Paramètres puissance, à régler
 
@@ -186,10 +183,10 @@ do
   echo -e "${GREEN}Periode rafraichissement : $refresh_time_second s ${NC}"
   echo
   
-  echo -e "${ARROW} ${CYAN}***   GPUs infos   ***${NC}"
-  echo
-  nvidia-smi
-  echo
+#  echo -e "${ARROW} ${CYAN}***   GPUs infos   ***${NC}"
+#  echo
+#  nvidia-smi
+#  echo
   
   
   echo -e "${ARROW} ${CYAN}***   Importation data solaire et gpu   ***${NC}"
@@ -243,3 +240,4 @@ do
   
   sleep $refresh_time_second
 done
+rm sol
