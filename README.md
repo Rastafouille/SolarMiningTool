@@ -3,8 +3,10 @@ Pilotage de la puissance de minage en fonction de la production solaire et coule
 
 <img src="Capture.jpg" width="500"/>
 
-
 ## Préalables
+
+Passer le script en executable
+	$ chmod +x SolarMiningTool.sh
 
 ### Librairies  à installer :
 	$ sudo apt-get update -y 
@@ -31,29 +33,27 @@ Modifier le fichier .json en remplacant les "xxx" par vos valeurs et renommer en
 - solax_sn="<Registration No. de son onduleur Solax>"
 
 Dans l'entête du script SolarMiningTool.sh éditer tous vos paramètres :
-gpu_nombre=<nombre de gpu sur le rig>
-refresh_time_second=<période de rachraichissement des puissances>
+- gpu_nombre=<nombre de gpu sur le rig>
+- refresh_time_second=<période de rachraichissement des puissances>
 
 Puis toutes les puissances que vous souhaitez en fonction de la couleur tempo et le tarif HC ou HP
+
 Sachant que le soleil en HC ...
 
-
 ### lancement au démarrage
-pour la script se lance dans un screen au démarrage
 
-sudo gedit /etc/rc.local
-dans un screen
- screen -S SolarMiningTool /home/user/SolarMiningTool/SolarMiningTool.sh
+pour que le script se lance dans un screen au démarrage
+	$ sudo nano /etc/rc.local
+ajouter
+	$ screen -S SolarMiningTool /home/user/SolarMiningTool/SolarMiningTool.sh
  
- 
- chmod +x SolarMiningTool.sh
- 
- 
- 
-  /etc/systemd/system/
-  systemctl daemon-reload
-  systemctl start SolarMiningTool.service
-  sudo journalctl -u SolarMiningTool.service
+ NE MARCHE PAS ....
+
+ tentative en cours avec systemd
+	$ /etc/systemd/system/SolarMiningTool.service
+	$ systemctl daemon-reload
+	$ systemctl start SolarMiningTool.service
+	$ sudo journalctl -u SolarMiningTool.service
 
   
   
