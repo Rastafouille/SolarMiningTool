@@ -1,12 +1,14 @@
 #!/bin/bash
 
+Repertoire_Script=$(cd $( dirname ${BASH_SOURCE[0]}) && pwd )
+
 ##### PARAMETRES A REGLER
 
-log_file_name="ApiData.json" #fichier a modifier avec ses paramètres
+api_file_name="$Repertoire_Script/ApiData.json" #fichier a modifier avec ses paramètres
     # import du json
-    solax_tokenid=$(cat $log_file_name | jq '.solax_tokenid'| tr -d '"')
-    solax_sn=$(cat $log_file_name | jq '.solax_sn'| tr -d '"')
-    base64=$(cat $log_file_name | jq '.base64'| tr -d '"')
+    solax_tokenid=$(cat $api_file_name | jq '.solax_tokenid'| tr -d '"')
+    solax_sn=$(cat $api_file_name | jq '.solax_sn'| tr -d '"')
+    base64=$(cat $api_file_name | jq '.base64'| tr -d '"')
 
 refresh_time_second=300
 
@@ -37,14 +39,20 @@ rouge_HC_worker_off_enable=1
 
 #### Autres paramètres - ne pas toucher 
 
-log_file_name="solar_mining_log.txt"
+log_file_name="$Repertoire_Script/solar_mining_log.txt"
+
+
+echo $log_file_name
 
 if [ -f /$log_file_name ]
   then
-    exit
+    true
   else
     >$log_file_name
 fi
+
+
+
 
 #color codes
 
@@ -240,4 +248,3 @@ do
   
   sleep $refresh_time_second
 done
-rm sol
