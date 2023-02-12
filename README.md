@@ -44,3 +44,14 @@ dans un screen
  
  
  chmod +x SolarMiningTool.sh
+ 
+ 
+ 
+  /etc/systemd/system/
+  systemctl daemon-reload
+  systemctl start SolarMiningTool.service
+  sudo journalctl -u SolarMiningTool.service
+
+  
+  
+ 
