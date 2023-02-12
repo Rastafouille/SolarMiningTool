@@ -42,14 +42,15 @@ Sachant que le soleil en HC ...
 
 ### lancement au démarrage
 
-pour que le script se lance dans un screen au démarrage
+Pour que le script se lance dans un screen au démarrage
 	$ sudo nano /etc/rc.local
-ajouter
+	
+Ajouter
 	$ screen -S SolarMiningTool /home/user/SolarMiningTool/SolarMiningTool.sh
  
  NE MARCHE PAS ....
 
- tentative en cours avec systemd
+ Tentative en cours avec systemd
 	$ /etc/systemd/system/SolarMiningTool.service
 	$ systemctl daemon-reload
 	$ systemctl start SolarMiningTool.service
