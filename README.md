@@ -3,16 +3,23 @@ Pilotage de la puissance de minage en fonction de la production solaire et coule
 
 <img src="Capture.jpg" width="500"/>
 
+L'idée est de réguler la puissanse électrique pour gérer le surplus solaire en restant dans des bornes min et max de puissance.
+Par exemple pour ma part, en jour bleue et blanc je mine à 250W par carte et autorise à monter à 300W si surplus de production solaire. 
+Par contre, en jour rouge, plutôt de 100W à 300W, voire même éteindre le worker (implémentation en cours) ou carement éteindre le rig via une prise connectée 
+(si je me chauffe je regarde...) 
+
+
 ## Préalables
 
 Passer le script en executable
 
 	$ chmod +x SolarMiningTool.sh
-
+	
 ### Librairies  à installer :
 	$ sudo apt-get update -y 
 	$ sudo apt-get install -y figlet 
 	$ sudo apt-get install -y jq 
+	$ sudo apt install screen
 
 ### API Tempo
 Pour récupérer la couleur Tempo via RTE
