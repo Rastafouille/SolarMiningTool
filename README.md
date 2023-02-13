@@ -38,7 +38,7 @@ Pour récupérer les valeurs de production solaire et surtout de surplus. Pour m
 Modifier le fichier .json en remplacant les "xxx" par vos valeurs et renommer en ApiData.json
 - base64="<votre identifiant api tempo en base 64>"
 - solax_tokenid="<tokenid de l'APi Solax>"
-- solax_sn="<Registration No. de son onduleur Solax>"
+- solax_sn="<Registration No. de son onduleur>"
 
 Dans l'entête du script SolarMiningTool.sh éditer tous vos paramètres :
 - gpu_nombre=<nombre de gpu sur le rig>
