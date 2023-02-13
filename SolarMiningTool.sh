@@ -94,7 +94,9 @@ function get_tempo_color() {
   access_token=$(echo $auth | jq '.access_token' | tr -d '"')
   #echo "access token : "$access_token
   
-  heure=$(date '+%H')
+
+  heure=$(expr $(date '+%H') + 0)
+
   if (($heure>5 & $heure<22))
     then tarif=HP
     else tarif=HC
@@ -185,7 +187,8 @@ do
   figlet -f standard "Solar Mining Tool"
   echo -e "${YELLOW}================================================================${NC}"
   echo -e "${BLUE}By https://github.com/Rastafouille ${NC}"
-  echo
+  echo -e "${BLUE}$(date)${NC}"
+  echo    
 
   echo -e "${GREEN}Nombre de GPU : $gpu_nombre ${NC}"
   echo -e "${GREEN}Periode rafraichissement : $refresh_time_second s ${NC}"
@@ -244,7 +247,7 @@ do
   echo
   
   set_powerlimit "$newpower"
-  echo $(date)", Surplus Production solaire : $feedinpower W, Nouveau Power Limit applique : $newpower W" >> $log_file_name
+  echo $(date)", EDF : $tarif $tempo_color, Surplus solaire : $feedinpower W, PL min : $gpu_power_min W, PL max : $gpu_power_max W, PL applique : $newpower W" >> $log_file_name
   
   sleep $refresh_time_second
 done
