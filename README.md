@@ -13,13 +13,13 @@ Par contre, en jour rouge, plutôt de 100W à 300W, voire même éteindre le wor
 
 Passer le script en executable
 
-	$ chmod +x SolarMiningTool.sh
+	chmod +x SolarMiningTool.sh
 	
 ### Librairies  à installer :
-	$ sudo apt-get update -y 
-	$ sudo apt-get install -y figlet 
-	$ sudo apt-get install -y jq 
-	$ sudo apt install screen
+	sudo apt-get update -y 
+	sudo apt-get install -y figlet 
+	sudo apt-get install -y jq 
+	sudo apt install screen
 
 ### API Tempo
 Pour récupérer la couleur Tempo via RTE
@@ -52,11 +52,11 @@ Sachant que le soleil en HC ...
 
 Pour que le script se lance dans un screen au démarrage
 
-	$ sudo nano /etc/rc.local
+	sudo nano /etc/rc.local
 	
 Ajouter
 
-	$ screen -S SolarMiningTool /home/user/SolarMiningTool/SolarMiningTool.sh
+	screen -S SolarMiningTool /home/user/SolarMiningTool/SolarMiningTool.sh
  
 NE MARCHE PAS ....
 
