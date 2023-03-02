@@ -31,7 +31,7 @@ blanc_HP_min=250
 blanc_HP_worker_off_enable=0
 
 rouge_HC_max=300
-rouge_HC_min=250
+rouge_HC_min=200
 rouge_HC_worker_off_enable=0
 rouge_HP_max=300
 rouge_HP_min=100
@@ -203,10 +203,10 @@ do
   echo -e "${ARROW} ${CYAN}***   Importation data solaire et gpu   ***${NC}"
   get_solax_info
 
-	actual_gpu_power=$(nvidia-smi -i=0 -q -d=POWER | grep "Power Draw" | grep -Eo '[+-]?[0-9]+?' | head -1) 
+	actual_gpu_power=$(nvidia-smi -i 0 -q -d POWER | grep "Power Draw" | grep -Eo '[+-]?[0-9]+?' | head -1) 
 	echo "Conso GPU actuelle : $actual_gpu_power W"
  
-	actuel_gpu_power_limit=$(nvidia-smi -i=0 -q -d=POWER | grep "Power Limit" | grep -Eo '[+-]?[0-9]+?' | head -1)
+	actuel_gpu_power_limit=$(nvidia-smi -i 0 -q -d POWER | grep "Power Limit" | grep -Eo '[+-]?[0-9]+?' | head -1)
 	echo "Power Limit GPU actuel : $actuel_gpu_power_limit W"
 	echo
   
