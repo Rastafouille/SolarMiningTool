@@ -66,7 +66,3 @@ NE MARCHE PAS ....
 	$ systemctl daemon-reload
 	$ systemctl start SolarMiningTool.service
 	$ sudo journalctl -u SolarMiningTool.service
-
-  
-  TEST
- 

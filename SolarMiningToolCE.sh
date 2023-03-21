@@ -51,8 +51,10 @@ if [ -f /$log_file_name ]
     >$log_file_name
 fi
 
-
-
+###### config chauffe-eau (CE)
+CE_IP=192.168.1.48
+CE_consigne=0
+CE_puissance=0
 
 #color codes
 
@@ -176,6 +178,18 @@ echo
 
 }
 
+function CE_set(){
+ curl -s "$CE_IP/set?consigne=$1" 
+ echo "Consigne puissance chauffe eau = $1 W"
+}
+
+function CE_get(){
+ CE_puissance=$(curl -s "$CE_IP/update")
+ echo "Puissance chauffe eau = $CE_puissance W"
+
+}
+
+
 ### Boucle principale
 
 while :
@@ -246,11 +260,31 @@ do
   echo "Power Limit applique: $newpower W"
   echo
   
-  set_powerlimit "$newpower"
+   set_powerlimit "$newpower"
   
-  ### enregistrement log
-  ligne="$(echo $(date)), EDF=$tarif $tempo_color, Surplus=$feedinpower, PL min=$gpu_power_min, PL max=$gpu_power_max, PL applique=$newpower"
-  sed -i "1i$ligne" $log_file_name 
+   echo 
+
+ echo -e "${ARROW} ${CYAN}***   Puissance chauffe eau   ***${NC}"
+
+ CE_get
+ CE_consigne=$((${CE_puissance%.*}+($feedinpower-($gpu_nombre*($newpower-$actuel_gpu_power_limit)))))
+ echo "$CE_consigne"
  
-  sleep $refresh_time_second
+ if (($CE_consigne>0))
+  then CE_set "$CE_consigne"
+  else CE_consigne=0 
+       CE_set "$CE_consigne"
+ fi
+
+
+
+### enregistrement log
+ligne="$(echo $(date)), EDF=$tarif $tempo_color, Surplus=$feedinpower, PL min=$gpu_power_min, PL max=$gpu_power_max, PL applique=$newpower, Consigne CE=$CE_consigne"
+ sed -i "1i$ligne" $log_file_name 
+
+
+
+sleep $refresh_time_second
+
 done
+
