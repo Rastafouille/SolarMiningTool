@@ -16,25 +16,25 @@ refresh_time_second=300
 
 gpu_nombre=4
 
-bleu_HC_max=300
-bleu_HC_min=200
+bleu_HC_max=250
+bleu_HC_min=250
 bleu_HC_worker_off_enable=0 # permettre l'arret sur worker en dessous de la valeur min, pas encore implémenter
-bleu_HP_max=300
-bleu_HP_min=200
+bleu_HP_max=250
+bleu_HP_min=250
 bleu_HP_worker_off_enable=0
 
-blanc_HC_max=300
-blanc_HC_min=200
+blanc_HC_max=250
+blanc_HC_min=250
 blanc_HC_worker_off_enable=0
-blanc_HP_max=300
-blanc_HP_min=200
+blanc_HP_max=250
+blanc_HP_min=250
 blanc_HP_worker_off_enable=0
 
-rouge_HC_max=300
-rouge_HC_min=200
+rouge_HC_max=250
+rouge_HC_min=250
 rouge_HC_worker_off_enable=0
-rouge_HP_max=300
-rouge_HP_min=100
+rouge_HP_max=250
+rouge_HP_min=250
 rouge_HC_worker_off_enable=1
 
 #### Autres paramètres - ne pas toucher 
@@ -179,7 +179,7 @@ echo
 }
 
 function CE_set(){
- curl -s "$CE_IP/set?consigne=$1" 
+ curl -s "$CE_IP/set?consigne=$1"
  echo "Consigne puissance chauffe eau = $1 W"
 }
 
@@ -267,21 +267,24 @@ do
  echo -e "${ARROW} ${CYAN}***   Puissance chauffe eau   ***${NC}"
 
  CE_get
- CE_consigne=$((${CE_puissance%.*}+($feedinpower-($gpu_nombre*($newpower-$actuel_gpu_power_limit)))))
- echo "$CE_consigne"
- 
+
+ if (($heure>1 & $heure<6))
+    then  CE_consigne=2000
+	echo "MODE force"
+    else  CE_consigne=$((${CE_puissance%.*}+($feedinpower-($gpu_nombre*($newpower-$actuel_gpu_power_limit)))))
+	echo "MODE solaire"
+ fi
+
  if (($CE_consigne>0))
   then CE_set "$CE_consigne"
-  else CE_consigne=0 
+  else CE_consigne=0
        CE_set "$CE_consigne"
  fi
 
 
-
 ### enregistrement log
-ligne="$(echo $(date)), EDF=$tarif $tempo_color, Surplus=$feedinpower, PL min=$gpu_power_min, PL max=$gpu_power_max, PL applique=$newpower, Consigne CE=$CE_consigne"
+ligne="$(echo $(date)), EDF=$tarif $tempo_color, Surplus=$feedinpower, PL min=$gpu_power_min, PL max=$gpu_power_max, PL applique=$newpower, Consigne CE=$CE_consigne, Reel CE=$CE_puissance"
  sed -i "1i$ligne" $log_file_name 
-
 
 
 sleep $refresh_time_second
