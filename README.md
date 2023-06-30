@@ -1,5 +1,6 @@
 # SolarMiningTool
 Pilotage de la puissance de minage en fonction de la production solaire et couleur Tempo EDF du jour
+
 Version chauffe eau (CE), si encore surplus de puissance, on l'envoie sur le CE via grace au boitier : <https://github.com/Rastafouille/PilotageChauffeEau> 
 
 <img src="Capture.jpg" width="500"/>
@@ -51,7 +52,7 @@ Puis toutes les puissances que vous souhaitez en fonction de la couleur tempo et
 
 Sachant que le soleil en HC ...
 
-### lancement au démarrage
+### Lancement au démarrage
 
 Pour que le script se lance dans un screen au démarrage
 
@@ -66,3 +67,12 @@ Pour hive os
 	$ sudo nano /home/user/xinit.user.sh
 	Ajouter
 	$ screen -S SolarMiningTool /home/user/SolarMiningTool/SolarMiningTool.sh && screen -d SolarMiningTool
+
+### Alias
+
+J'aime bien rajouter des raccourci pour aller voir le screen et le fichier de log.
+dans le .bashrc rajouter :
+
+	$ alias solard='screen -d SolarMiningTool'
+	$ alias solar='screen -r SolarMiningTool'
+	$ alias solarlog='nano SolarMiningTool/solar_mining_log.txt'
