@@ -3,7 +3,7 @@ Pilotage de la puissance de minage en fonction de la production solaire et coule
 
 Version chauffe eau (CE), si encore surplus de puissance, on l'envoie sur le CE via grace au boitier : <https://github.com/Rastafouille/PilotageChauffeEau> 
 
-<img src="Capture.jpg" width="500"/>
+<img src="CaptureCE.jpg" width="500"/>
 
 L'idée est de réguler la puissanse électrique pour gérer le surplus solaire en restant dans des bornes min et max de puissance.
 Par exemple pour ma part, en jour bleue et blanc je mine à 170W par carte et autorise à monter à 250W si surplus de production solaire. 
@@ -70,9 +70,11 @@ Pour hive os
 
 ### Alias
 
-J'aime bien rajouter des raccourci pour aller voir le screen et le fichier de log.
-dans le .bashrc rajouter :
+J'aime bien rajouter des raccourcis pour aller voir le screen et le fichier de log.
+
+Dans le .bashrc rajouter :
 
 	$ alias solard='screen -d SolarMiningTool'
 	$ alias solar='screen -r SolarMiningTool'
 	$ alias solarlog='nano SolarMiningTool/solar_mining_log.txt'
+
