@@ -16,7 +16,7 @@ Version chauffe eau (CE), idem pour la puissance du rig, une fois qu'il est au m
 Voila ce que ca donne sur la conso de la maison. En vert la production solaire, en rouge la conso maison qui se régule bien autour de zéro, pas de surplus de production perdu.
 En été le CE fonctionne en 100% solaire, en hiver je complète une heure ou deux en HC la nuit, la fonction est dans le code dans "marche forcee".
 
-<img src="prod.jpg" width="500"/>
+<img src="prod.jpg" width="1000"/>
 
 
 
