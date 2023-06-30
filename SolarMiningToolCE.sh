@@ -17,24 +17,24 @@ refresh_time_second=300
 gpu_nombre=4
 
 bleu_HC_max=250
-bleu_HC_min=250
+bleu_HC_min=170
 bleu_HC_worker_off_enable=0 # permettre l'arret sur worker en dessous de la valeur min, pas encore implémenter
 bleu_HP_max=250
-bleu_HP_min=250
+bleu_HP_min=170
 bleu_HP_worker_off_enable=0
 
 blanc_HC_max=250
-blanc_HC_min=250
+blanc_HC_min=170
 blanc_HC_worker_off_enable=0
 blanc_HP_max=250
-blanc_HP_min=250
+blanc_HP_min=170
 blanc_HP_worker_off_enable=0
 
 rouge_HC_max=250
-rouge_HC_min=250
+rouge_HC_min=170
 rouge_HC_worker_off_enable=0
 rouge_HP_max=250
-rouge_HP_min=250
+rouge_HP_min=170
 rouge_HC_worker_off_enable=1
 
 #### Autres paramètres - ne pas toucher 
@@ -66,7 +66,7 @@ GREEN='\033[1;32m'
 CYAN='\033[1;36m'
 NC='\033[0m'
 
-### definition des fonctions
+### definition des fonctions #########################################################
 
 function set_powerlimit() {
   echo -e "${ARROW} ${CYAN}***   Running Power limit setting   ***${NC}"
@@ -190,7 +190,7 @@ function CE_get(){
 }
 
 
-### Boucle principale
+### Boucle principale ####################################################
 
 while :
 do
@@ -232,57 +232,99 @@ do
   echo -e "${ARROW} ${CYAN}***   Calcul puissance min et max   ***${NC}"
   set_min_max_power
  
+#si surplus solaire, on augmente la puissance GPU puis le CE####################################
  
-  echo -e "${ARROW} ${CYAN}***   Calcul nouvelle puissance limite   ***${NC}"
-  if  (($feedinpower>0 & $actuel_gpu_power_limit<$gpu_power_max))
-    then
-      newpower=$(echo $(($actuel_gpu_power_limit+$feedinpower/$gpu_nombre)))
-      echo -e "${ARROW} ${CYAN}Augmentation du power limit...${NC}"
-      echo "Nouveau Power Limit cible : $newpower W"
-  
-  elif (($feedinpower<0 & $actuel_gpu_power_limit>$gpu_power_min))
-    then
-      newpower=$(echo $(($actuel_gpu_power_limit+$feedinpower/$gpu_nombre)))
-      echo -e "${ARROW} ${CYAN}Baisse du power limit...${NC}"
-      echo "Nouveau Power Limite cible : $newpower W"
-
+ if (($feedinpower>0))
+   then
+   echo -e "${ARROW} ${CYAN}***   Calcul nouvelle puissance GPU limite   ***${NC}"
+    if  (($actuel_gpu_power_limit<$gpu_power_max))
+      then
+        newpower=$(echo $(($actuel_gpu_power_limit+$feedinpower/$gpu_nombre)))
+        echo -e "${ARROW} ${CYAN}Augmentation du power limit...${NC}"
+        echo "Nouveau Power Limit cible : $newpower W"
     else newpower=$actuel_gpu_power_limit
-      echo "Power limit inchange"
-  fi
+        echo "Power limit inchange"
+    fi
+    
+    if (("$newpower" > "$gpu_power_max"))
+      then   newpower=$gpu_power_max
+    fi
+    
+    echo "Power Limit applique: $newpower W"
+    echo
+    
+     set_powerlimit "$newpower"
+    
+    echo 
   
-  if (("$newpower" < "$gpu_power_min"))
-    then newpower=$gpu_power_min
+   echo -e "${ARROW} ${CYAN}***   Puissance chauffe eau   ***${NC}"
   
-  elif (("$newpower" > "$gpu_power_max"))
-    then   newpower=$gpu_power_max
-  fi
+   CE_get
   
-  echo "Power Limit applique: $newpower W"
-  echo
+   if (($heure>1 & $heure<6))
+      then  CE_consigne=0
+  	  echo "MODE force"
+   else  
+      CE_consigne=$((${CE_puissance%.*}+($feedinpower-($gpu_nombre*($newpower-$actuel_gpu_power_limit)))))
+  	  #else  CE_consigne=$((${CE_consigne}+($feedinpower-($gpu_nombre*($newpower-$actuel_gpu_power_limit)))))
+      echo "MODE solaire"
+   fi
   
-   set_powerlimit "$newpower"
-  
-   echo 
+   if (($CE_consigne>0))
+    then CE_set "$CE_consigne"
+    else CE_consigne=0
+         CE_set "$CE_consigne"
+   fi
+ 
+ 
+ # si négatif solaire on diminue le CE puis la puissance GPU##########################################
 
- echo -e "${ARROW} ${CYAN}***   Puissance chauffe eau   ***${NC}"
-
- CE_get
-
- if (($heure>1 & $heure<6))
-    then  CE_consigne=2000
-	echo "MODE force"
-    else  CE_consigne=$((${CE_puissance%.*}+($feedinpower-($gpu_nombre*($newpower-$actuel_gpu_power_limit)))))
-	echo "MODE solaire"
- fi
-
- if (($CE_consigne>0))
-  then CE_set "$CE_consigne"
-  else CE_consigne=0
+ elif (($feedinpower<0))
+   then
+   echo -e "${ARROW} ${CYAN}***   Puissance chauffe eau   ***${NC}"
+   CE_get
+  
+   if (($heure>1 & $heure<6))
+      then  CE_consigne=0
+  	  echo "MODE force"
+   else  CE_consigne=$((${CE_puissance%.*}+$feedinpower))
+      echo "MODE solaire"
+   fi
+  
+   if (($CE_consigne>0))
+      then CE_set "$CE_consigne"
+   else CE_consigne=0
        CE_set "$CE_consigne"
- fi
+       echo 
+       echo -e "${ARROW} ${CYAN}***   Calcul nouvelle puissance GPU limite   ***${NC}"
+          
+          if (($actuel_gpu_power_limit>$gpu_power_min))
+            then
+              newpower=$(echo $(($actuel_gpu_power_limit+$((${CE_puissance%.*}+$feedinpower))/$gpu_nombre)))
+              echo -e "${ARROW} ${CYAN}Baisse du power limit...${NC}"
+              echo "Nouveau Power Limite cible : $newpower W"
+        
+          else newpower=$actuel_gpu_power_limit
+              echo "Power limit inchange"
+          fi
+          
+          if (("$newpower" < "$gpu_power_min"))
+            then newpower=$gpu_power_min
+          fi
+          
+          echo "Power Limit applique: $newpower W"
+          echo
+          
+           set_powerlimit "$newpower"
+    
+    fi
+  fi
+ 
 
 
 ### enregistrement log
+
+
 ligne="$(echo $(date)), EDF=$tarif $tempo_color, Surplus=$feedinpower, PL min=$gpu_power_min, PL max=$gpu_power_max, PL applique=$newpower, Consigne CE=$CE_consigne, Reel CE=$CE_puissance"
  sed -i "1i$ligne" $log_file_name 
 

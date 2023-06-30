@@ -1,12 +1,15 @@
 # SolarMiningTool
 Pilotage de la puissance de minage en fonction de la production solaire et couleur Tempo EDF du jour
+Version chauffe eau (CE), si encore surplus de puissance, on l'envoie sur le CE via grace au boitier : <https://github.com/Rastafouille/PilotageChauffeEau> 
 
 <img src="Capture.jpg" width="500"/>
 
 L'idée est de réguler la puissanse électrique pour gérer le surplus solaire en restant dans des bornes min et max de puissance.
-Par exemple pour ma part, en jour bleue et blanc je mine à 250W par carte et autorise à monter à 300W si surplus de production solaire. 
-Par contre, en jour rouge, plutôt de 100W à 300W, voire même éteindre le worker (implémentation en cours) ou carrément éteindre le rig via une prise connectée 
+Par exemple pour ma part, en jour bleue et blanc je mine à 170W par carte et autorise à monter à 250W si surplus de production solaire. 
+Par contre, en jour rouge, plutôt de 100W à 250W, voire même éteindre le worker (implémentation en cours) ou carrément éteindre le rig via une prise connectée 
 (si je me chauffe je regarde...) 
+
+Version chauffe eau (CE), idem pour la puissance du rig, une fois qu'il est au max on envoie le reste au CE, et inversement qd la puissance solaire diminue, on diminue celle du CE puis du Rig.
 
 
 ## Préalables
@@ -52,17 +55,14 @@ Sachant que le soleil en HC ...
 
 Pour que le script se lance dans un screen au démarrage
 
+Sur ubuntu :
+
 	$ sudo nano /etc/rc.local
-	
-Ajouter
-
-	$ screen -S SolarMiningTool /home/user/SolarMiningTool/SolarMiningTool.sh
+	Ajouter
+	$ screen -S SolarMiningTool /home/user/SolarMiningTool/SolarMiningTool.sh && screen -d SolarMiningTool
  
-NE MARCHE PAS ....
+Pour hive os
 
- Tentative en cours avec systemd
- 
-	$ /etc/systemd/system/SolarMiningTool.service
-	$ systemctl daemon-reload
-	$ systemctl start SolarMiningTool.service
-	$ sudo journalctl -u SolarMiningTool.service
+	$ sudo nano /home/user/xinit.user.sh
+	Ajouter
+	$ screen -S SolarMiningTool /home/user/SolarMiningTool/SolarMiningTool.sh && screen -d SolarMiningTool
