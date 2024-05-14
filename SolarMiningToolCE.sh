@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 Repertoire_Script=$(cd $( dirname ${BASH_SOURCE[0]}) && pwd )
 
@@ -16,25 +16,25 @@ refresh_time_second=300
 
 gpu_nombre=4
 
-bleu_HC_max=250
-bleu_HC_min=170
+bleu_HC_max=240
+bleu_HC_min=240
 bleu_HC_worker_off_enable=0 # permettre l'arret sur worker en dessous de la valeur min, pas encore implémenter
-bleu_HP_max=250
-bleu_HP_min=170
+bleu_HP_max=240
+bleu_HP_min=240
 bleu_HP_worker_off_enable=0
 
-blanc_HC_max=250
-blanc_HC_min=170
+blanc_HC_max=240
+blanc_HC_min=240
 blanc_HC_worker_off_enable=0
-blanc_HP_max=250
-blanc_HP_min=170
+blanc_HP_max=240
+blanc_HP_min=240
 blanc_HP_worker_off_enable=0
 
-rouge_HC_max=250
-rouge_HC_min=170
+rouge_HC_max=240
+rouge_HC_min=240
 rouge_HC_worker_off_enable=0
-rouge_HP_max=250
-rouge_HP_min=170
+rouge_HP_max=240
+rouge_HP_min=240
 rouge_HC_worker_off_enable=1
 
 #### Autres paramètres - ne pas toucher 
@@ -55,6 +55,8 @@ fi
 CE_IP=192.168.1.48
 CE_consigne=0
 CE_puissance=0
+CE_cumul=0
+CE_force=0
 
 #color codes
 
@@ -261,20 +263,37 @@ do
   
    CE_get
   
-   if (($heure>1 & $heure<6))
-      then  CE_consigne=0
+  # ca sert a rien, ya pas de surplus la nuit...
+   if (($heure==1 & $CE_cumul<4500))
+      then  CE_consigne=1500
   	  echo "MODE force"
+      CE_force=1
+   elif (($heure==2 & $CE_cumul<3000))
+      then  CE_consigne=1500
+  	  echo "MODE force"
+      CE_force=1
+   elif (($heure==3 & $CE_cumul<1500))
+      then  CE_consigne=1500
+  	  echo "MODE force"
+      CE_force=1
+   elif (($heure==4))
+      then CE_cumul=0
    else  
       CE_consigne=$((${CE_puissance%.*}+($feedinpower-($gpu_nombre*($newpower-$actuel_gpu_power_limit)))))
   	  #else  CE_consigne=$((${CE_consigne}+($feedinpower-($gpu_nombre*($newpower-$actuel_gpu_power_limit)))))
       echo "MODE solaire"
+      CE_force=0
    fi
   
    if (($CE_consigne>0))
     then CE_set "$CE_consigne"
+      if ((&CE_force==0))
+        then CE_cumul+=$(($CE_consigne*$refresh_time_second/3600))        
+      fi
     else CE_consigne=0
          CE_set "$CE_consigne"
    fi
+   echo "Cumul puissance sur la journee = $CE_cumul W/h"
  
  
  # si négatif solaire on diminue le CE puis la puissance GPU##########################################
@@ -284,17 +303,34 @@ do
    echo -e "${ARROW} ${CYAN}***   Puissance chauffe eau   ***${NC}"
    CE_get
   
-   if (($heure>1 & $heure<6))
-      then  CE_consigne=0
+   if (($heure==1 & $CE_cumul<4500))
+      then  CE_consigne=1500
   	  echo "MODE force"
+      CE_force=1
+   elif (($heure==2 & $CE_cumul<3000))
+      then  CE_consigne=1500
+  	  echo "MODE force"
+      CE_force=1
+   elif (($heure==3 & $CE_cumul<1500))
+      then  CE_consigne=1500
+  	  echo "MODE force"
+      CE_force=1
+   elif (($heure==4))
+      then CE_cumul=0
    else  CE_consigne=$((${CE_puissance%.*}+$feedinpower))
       echo "MODE solaire"
+      CE_force=0
    fi
   
    if (($CE_consigne>0))
       then CE_set "$CE_consigne"
+        if ((&CE_force==0))
+          then CE_cumul+=$(($CE_consigne*$refresh_time_second/3600))        
+        fi
    else CE_consigne=0
        CE_set "$CE_consigne"
+        echo "Cumul puissance sur la journee = $CE_cumul W/h"
+
        echo 
        echo -e "${ARROW} ${CYAN}***   Calcul nouvelle puissance GPU limite   ***${NC}"
           
@@ -325,11 +361,12 @@ do
 ### enregistrement log
 
 
-ligne="$(echo $(date)), EDF=$tarif $tempo_color, Surplus=$feedinpower, PL min=$gpu_power_min, PL max=$gpu_power_max, PL applique=$newpower, Consigne CE=$CE_consigne, Reel CE=$CE_puissance"
+ligne="$(echo $(date)), EDF=$tarif $tempo_color, Surplus=$feedinpower, PL min=$gpu_power_min, PL max=$gpu_power_max, PL applique=$newpower, Consigne CE=$CE_consigne, Reel CE=$CE_puissance, Cumul CE=$CE_cumul"
  sed -i "1i$ligne" $log_file_name 
 
 
 sleep $refresh_time_second
 
 done
+
 
