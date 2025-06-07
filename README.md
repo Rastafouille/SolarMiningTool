@@ -85,3 +85,20 @@ Dans le .bashrc rajouter :
 	$ alias solar='screen -r SolarMiningTool'
 	$ alias solarlog='nano SolarMiningTool/solar_mining_log.txt'
 
+## Interface Web (Flask)
+
+### Installation des dépendances
+
+```bash
+pip install flask
+```
+
+### Lancement de l'interface web
+
+```bash
+cd web
+python app.py
+```
+
+Accéder à l'interface sur http://localhost:5000
+

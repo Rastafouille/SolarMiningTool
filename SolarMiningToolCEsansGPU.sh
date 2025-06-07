@@ -3,12 +3,11 @@
 Repertoire_Script=$(cd $( dirname ${BASH_SOURCE[0]}) && pwd )
 
 ##### PARAMETRES A REGLER
-
 api_file_name="$Repertoire_Script/ApiData.json"
 solax_tokenid=$(cat $api_file_name | jq '.solax_tokenid' | tr -d '"')
 solax_sn=$(cat $api_file_name | jq '.solax_sn' | tr -d '"')
 
-refresh_time_second=300
+refresh_time_second=600
 
 # Activer/désactiver le mode force la nuit
 force_nuit_enable=1
@@ -49,16 +48,44 @@ NC='\033[0m'
 
 # Fonction appel API SolaX v2
 function get_solax_info() {
-  data=$(curl -s -X POST https://global.solaxcloud.com/api/v2/dataAccess/realtimeInfo/get \
-    -H "Content-Type: application/json" \
-    -H "tokenId: $solax_tokenid" \
-    -d "{\"wifiSn\":\"$solax_sn\"}")
+  local retries=5
 
-  acpower=$(echo $data | jq '.result.acpower')
-  echo "Production panneaux : $acpower W"
-  feedinpower=$(echo $data | jq '.result.feedinpower')
-  echo "Surplus Production solaire : $feedinpower W"
-  sleep 0.2
+  for ((i=1; i<=retries; i++)); do
+    data=$(curl -s -X POST https://global.solaxcloud.com/api/v2/dataAccess/realtimeInfo/get \
+      -H "Content-Type: application/json" \
+      -H "tokenId: $solax_tokenid" \
+      -d "{\"wifiSn\":\"$solax_sn\"}")
+
+    success=$(echo $data | jq '.success')
+
+    if [[ "$success" == "true" ]]; then
+      acpower=$(echo $data | jq '.result.acpower')
+      feedinpower=$(echo $data | jq '.result.feedinpower')
+
+      if [[ "$acpower" == "null" ]]; then acpower=0; fi
+      if [[ "$feedinpower" == "null" ]]; then feedinpower=0; fi
+
+      echo "Production panneaux : $acpower W"
+      echo "Surplus Production solaire : $feedinpower W"
+      sleep 0.2
+      return
+    else
+      code=$(echo $data | jq '.code')
+      exception=$(echo $data | jq '.exception' | tr -d '"')
+      echo -e "${RED}Erreur API Solax: code=$code message=$exception${NC}"
+
+      if [[ "$code" == "104" ]]; then
+        echo "Quota minute atteint. Attente avant retry..."
+        sleep 65
+      else
+        break
+      fi
+    fi
+  done
+
+  echo -e "${RED}Impossible d'obtenir les données Solax après $retries tentatives.${NC}"
+  acpower=0
+  feedinpower=0
 }
 
 # Lecture puissance chauffe-eau
